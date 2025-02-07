@@ -15,6 +15,8 @@ class ScalacInvoker{
   public static ScalacInvokerResults invokeCompiler(CompileOptions ops, String[] compilerArgs)
     throws IOException, Exception{
 
+    //if (true) throw new RuntimeException("lolxd");
+
     ReportableMainClass comp = new ReportableMainClass(ops);
 
     ScalacInvokerResults results = new ScalacInvokerResults();

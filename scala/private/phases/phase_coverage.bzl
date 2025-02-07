@@ -30,6 +30,7 @@ def _phase_coverage_default(ctx, p, _args = struct()):
     )
 
 def _phase_coverage(ctx, p, srcjars):
+    print("**** scala/private/phases/phase_coverage.bzl: Hello from _phase_coverage, ctx.coverage_instrumented() = " + str(ctx.coverage_instrumented()))
     instrumented_files_provider = coverage_common.instrumented_files_info(
         ctx,
         source_attributes = ["srcs"],
@@ -58,6 +59,7 @@ def _phase_coverage(ctx, p, srcjars):
         args.add(output_jar)
         args.add_all(ctx.files.srcs)
 
+        print("**** scala/private/phases/phase_coverage.bzl: Hello from _phase_coverage, input_jar = %s, output_jar = %s" % (input_jar, output_jar))
         ctx.actions.run(
             mnemonic = "JacocoInstrumenter",
             inputs = [input_jar],
