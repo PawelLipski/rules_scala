@@ -22,6 +22,7 @@ def phase_coverage_runfiles(ctx, p):
             for jar in rjars.to_list()
         ])
         jacocorunner = ctx.toolchains["@io_bazel_rules_scala//scala:toolchain_type"].jacocorunner
+        print("**** phase_coverage_runfiles: coverage_replacements = " + str(coverage_replacements))
         coverage_runfiles = jacocorunner.files.to_list() + ctx.files._lcov_merger + coverage_replacements.values()
     return struct(
         coverage_runfiles = coverage_runfiles,
