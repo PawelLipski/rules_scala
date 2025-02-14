@@ -80,17 +80,6 @@ def _scala_library_impl(ctx):
         ],
     )
 
-def _print_coverage_replacements_impl(ctx):
-    target = ctx.attr.target_rule[CoverageReplacements]
-
-    # Assuming the provider has a field named "coverage_data" that you want to print
-    print("======= REPLACEMENTS ======= " + str(target.replacements))
-
-print_coverage_replacements = rule(
-    implementation = _print_coverage_replacements_impl,
-    attrs = {"target_rule": attr.label()},
-)
-
 _scala_library_attrs = {}
 
 _scala_library_attrs.update(implicit_deps)
