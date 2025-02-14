@@ -37,6 +37,12 @@ def phase_default_info(ctx, p):
         if hasattr(phase, "runfiles"):
             runfiles.append(phase.runfiles)
 
+    print()
+    print("phase_default_info: direct = " + str(direct))
+    print()
+    print("phase_default_info: transitive = " + str(files))
+    print()
+    print("phase_default_info: runfiles = " + str(runfiles))
     return struct(
         external_providers = {
             "DefaultInfo": DefaultInfo(

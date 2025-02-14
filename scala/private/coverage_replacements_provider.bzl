@@ -18,7 +18,7 @@
 # duplicate providers.
 #
 
-_CoverageReplacements = provider(
+CoverageReplacements = provider(
     fields = {
         "replacements": "hash of files to swap out",
     },
@@ -40,10 +40,10 @@ _dependency_attributes = [
 def _combine(*entriess, base = {}):
     return _CombinedCoverageReplacements(replacements = _dicts_add(base, *(
         [
-            entry[_CoverageReplacements].replacements
+            entry[CoverageReplacements].replacements
             for entries in entriess
             for entry in entries
-            if _CoverageReplacements in entry
+            if CoverageReplacements in entry
         ] + [
             entry[_CombinedCoverageReplacements].replacements
             for entries in entriess
@@ -53,6 +53,8 @@ def _combine(*entriess, base = {}):
     )))
 
 def _from_ctx(ctx, base = {}):
+    for name in _dependency_attributes:
+        print("_from_ctx: attr name = " + name + ", attr value = " + str(getattr(ctx.attr, name, [])))
     return _combine(
         base = base,
         *[getattr(ctx.attr, name, []) for name in _dependency_attributes]
@@ -74,7 +76,7 @@ _aspect = aspect(
 coverage_replacements_provider = struct(
     aspect = _aspect,
     combine = _combine,
-    create = _CoverageReplacements,
+    create = CoverageReplacements,
     dependency_attributes = _dependency_attributes,
     from_ctx = _from_ctx,
 )

@@ -2,11 +2,11 @@
 The phase API for rules implementation
 """
 
+load("@bazel_skylib//lib:dicts.bzl", "dicts")
 load(
     "@io_bazel_rules_scala//scala:advanced_usage/providers.bzl",
     _ScalaRulePhase = "ScalaRulePhase",
 )
-load("@bazel_skylib//lib:dicts.bzl", "dicts")
 
 # A method to modify the built-in phase list
 # - Insert new phases to the first/last position
@@ -88,6 +88,8 @@ def _run_phases(ctx, builtin_customizable_phases, target):
             current_provider = struct(**global_provider)
 
     # The final return of rules implementation
+    for k, v in acculmulated_external_providers.items():
+        print("_run_phases: target = " + str(target) + ", acculmulated_external_providers: " + str(k) + " => " + str(v))
     return acculmulated_external_providers.values()
 
 # A method to pass in phase provider

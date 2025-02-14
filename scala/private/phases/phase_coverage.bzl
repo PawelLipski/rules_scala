@@ -73,7 +73,7 @@ def _phase_coverage(ctx, p, srcjars):
         provider = _coverage_replacements_provider.create(
             replacements = replacements,
         )
-        external_providers["_CoverageReplacements"] = provider
+        external_providers["CoverageReplacements"] = provider
         return struct(
             replacements = replacements,
             external_providers = external_providers,
