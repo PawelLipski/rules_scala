@@ -24,7 +24,7 @@ import org.jacoco.core.runtime.OfflineInstrumentationAccessGenerator;
 public final class JacocoInstrumenter implements Worker.Interface {
 
   public static void main(String[] args) throws Exception {
-    if (true) throw new RuntimeException("lolxd");
+    //if (true) throw new RuntimeException("lolxd");
 
     Worker.workerMain(args, new JacocoInstrumenter());
   }
