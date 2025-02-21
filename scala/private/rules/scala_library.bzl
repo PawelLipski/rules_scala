@@ -1,5 +1,4 @@
 load("@bazel_skylib//lib:dicts.bzl", _dicts = "dicts")
-load("@io_bazel_rules_scala//scala:scala_cross_version.bzl", "scala_version_transition", "toolchain_transition_attr")
 load(
     "@io_bazel_rules_scala//scala/private:common.bzl",
     "sanitize_string_for_usage",
@@ -16,6 +15,7 @@ load(
     "@io_bazel_rules_scala//scala/private:coverage_replacements_provider.bzl",
     _coverage_replacements_provider = "coverage_replacements_provider",
 )
+load("@io_bazel_rules_scala//scala:scala_cross_version.bzl", "scala_version_transition", "toolchain_transition_attr")
 load(
     "@io_bazel_rules_scala//scala/private:phases/phases.bzl",
     "extras_phases",
@@ -43,8 +43,6 @@ load(
 ##
 # Common stuff to _library rules
 ##
-
-load("//scala/private:coverage_replacements_provider.bzl", "CoverageReplacements")
 
 _library_attrs = {
     "main_class": attr.string(),

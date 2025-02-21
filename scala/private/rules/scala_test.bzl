@@ -47,7 +47,6 @@ def _scala_test_impl(ctx):
             # no need to build an ijar for an executable
             ("semanticdb", phase_semanticdb),
             ("compile", phase_compile_scalatest),
-            #("coverage", phase_coverage_common),
             ("merge_jars", phase_merge_jars),
             ("runfiles", phase_runfiles_scalatest),
             ("coverage_runfiles", phase_coverage_runfiles),

@@ -30,7 +30,6 @@ def _phase_coverage_default(ctx, p, _args = struct()):
     )
 
 def _phase_coverage(ctx, p, srcjars):
-    print("**** _phase_coverage, ctx.coverage_instrumented() = " + str(ctx.coverage_instrumented()))
     instrumented_files_provider = coverage_common.instrumented_files_info(
         ctx,
         source_attributes = ["srcs"],
@@ -45,41 +44,3 @@ def _phase_coverage(ctx, p, srcjars):
         replacements = {},
         external_providers = external_providers,
     )
-
-#    if len(ctx.files.srcs) + len(srcjars.to_list()) == 0 or not ctx.coverage_instrumented():
-#        return struct(
-#            replacements = {},
-#            external_providers = external_providers,
-#        )
-#    else:
-#        input_jar = ctx.outputs.jar
-#        output_jar = ctx.actions.declare_file(
-#            "{}-offline.jar".format(input_jar.basename.split(".")[0]),
-#        )
-#
-#        args = ctx.actions.args()
-#        args.set_param_file_format("multiline")
-#        args.use_param_file("@%s", use_always = True)
-#        args.add(input_jar)
-#        args.add(output_jar)
-#        args.add_all(ctx.files.srcs)
-#
-#        print("**** _phase_coverage, input_jar = %s, output_jar = %s" % (input_jar, output_jar))
-#        ctx.actions.run(
-#            mnemonic = "JacocoInstrumenter",
-#            inputs = [input_jar],
-#            outputs = [output_jar],
-#            executable = ctx.attr._code_coverage_instrumentation_worker.files_to_run,
-#            execution_requirements = {"supports-workers": "1"},
-#            arguments = ["--jvm_flag=%s" % f for f in _allow_security_manager(ctx)] + [args],
-#        )
-#
-#        replacements = {input_jar: output_jar}
-#        provider = _coverage_replacements_provider.create(
-#            replacements = replacements,
-#        )
-#        external_providers["CoverageReplacements"] = provider
-#        return struct(
-#            replacements = replacements,
-#            external_providers = external_providers,
-#        )
