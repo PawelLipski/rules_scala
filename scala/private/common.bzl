@@ -83,8 +83,7 @@ def _additional_transitive_compile_jars(
         # dep_target will not always have a PlusOneDeps provider, such as
         # with scala_maven_import_external, hence the need for the fallback.
         if PlusOneDeps in dep_target:
-            plus_one_jars = [dep[JavaInfo].compile_jars for dep in dep_target[PlusOneDeps].direct_deps if JavaInfo in dep]
-
+            plus_one_jars = [depset([jar for jar in dep[JavaInfo].compile_jars.to_list() if not "/bin/external/maven" in jar.path and not "/bin/external/multiversion_maven" in jar.path]) for dep in dep_target[PlusOneDeps].direct_deps if JavaInfo in dep]
             # plus_one_jars only contains the deps of deps, not the deps themselves.
             # Hence the need to include the dep's compile jars anyways
             return depset(transitive = plus_one_jars + [java_provider.compile_jars])
