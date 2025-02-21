@@ -173,7 +173,7 @@ def compile_scala(
             outputs = [output_jar],
             executable = ctx.attr._code_coverage_instrumentation_worker.files_to_run,
             execution_requirements = {"supports-workers": "1"},
-            arguments = ["--jvm_flag=%s" % f for f in allow_security_manager(ctx)] + [args],
+            arguments = ["--jvm_flag=%s" % f for f in ["-Djava.security.manager=allow"]] + [args],
         )
 
 def compile_java(ctx, source_jars, source_files, output, extra_javac_opts, providers_of_dependencies):
