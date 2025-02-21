@@ -131,7 +131,7 @@ def compile_scala(
     # @bazel_tools//tools/jdk:toolchain_type
     final_scalac_jvm_flags = first_non_empty(scalac_jvm_flags, toolchain.scalac_jvm_flags) + allow_security_manager(ctx)
 
-    print("compile_scala: output = %s, ctx.coverage_instrumented() = %s, len(ctx.files.srcs) = %s, len(all_srcjars) = %s" % (output, ctx.coverage_instrumented(), len(ctx.files.srcs), len(all_srcjars.to_list())))
+    # print("compile_scala: output = %s, ctx.coverage_instrumented() = %s, len(ctx.files.srcs) = %s, len(all_srcjars) = %s" % (output, ctx.coverage_instrumented(), len(ctx.files.srcs), len(all_srcjars.to_list())))
     ctx.actions.run(
         inputs = ins,
         outputs = outs,
@@ -173,7 +173,7 @@ def compile_scala(
             outputs = [output_jar],
             executable = ctx.attr._code_coverage_instrumentation_worker.files_to_run,
             execution_requirements = {"supports-workers": "1"},
-            arguments = ["--jvm_flag=%s" % f for f in ["-Djava.security.manager=allow"]] + [args],
+            arguments = ["--jvm_flag=%s" % f for f in allow_security_manager(ctx)] + [args],
         )
 
 def compile_java(ctx, source_jars, source_files, output, extra_javac_opts, providers_of_dependencies):
@@ -251,11 +251,5 @@ def java_bin_windows(ctx):
 def is_windows(ctx):
     return ctx.configuration.host_path_separator == ";"
 
-# Return a jvm flag allowing security manager for jdk runtime >= 17
-# If no runtime is supplied then runtime is taken from ctx.attr._java_host_runtime
-# This must be a runtime used in generated java_binary script (usually workers using SecurityManager)
 def allow_security_manager(ctx, runtime = None):
-    java_runtime = runtime if runtime else ctx.attr._java_host_runtime[java_common.JavaRuntimeInfo]
-
-    # Bazel 5.x doesn't have java_runtime.version defined
-    return ["-Djava.security.manager=allow"] if hasattr(java_runtime, "version") and java_runtime.version >= 17 else []
+    return ["-Djava.security.manager=allow"]
