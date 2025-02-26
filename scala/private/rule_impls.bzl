@@ -72,12 +72,17 @@ def compile_scala(
     enable_stats_file = toolchain.enable_stats_file
     enable_diagnostics_report = toolchain.enable_diagnostics_report
 
+    if len(ctx.files.srcs) + len(all_srcjars.to_list()) == 0 or not ctx.coverage_instrumented() or not hasattr(ctx.attr, "_code_coverage_instrumentation_worker"):
+        temp_output = output
+    else:
+        temp_output = ctx.actions.declare_file("%s-to-be-instrumented.jar" % ctx.label.name)
+
     args = ctx.actions.args()
     args.set_param_file_format("multiline")
     args.use_param_file(param_file_arg = "@%s", use_always = True)
     args.add("--CurrentTarget", target_label)
     args.add("--StampLabel", stamp_target_label if stamp_target_label != None else target_label)
-    args.add("--JarOutput", output)
+    args.add("--JarOutput", temp_output)
     args.add("--Manifest", manifest)
     args.add("--PrintCompileTime", print_compile_time)
     args.add("--ExpectJavaOutput", expect_java_output)
@@ -113,7 +118,7 @@ def compile_scala(
     if dependency_info.unused_deps_mode != "off" or dependency_info.strict_deps_mode != "off":
         args.add_all("--UnusedDepsIgnoredTargets", unused_dependency_checker_ignored_targets)
 
-    outs = [output, statsfile, diagnosticsfile, scaladepsfile] + additional_outputs
+    outs = [temp_output, statsfile, diagnosticsfile, scaladepsfile] + additional_outputs
 
     ins = depset(
         direct = [manifest] + sources + classpath_resources + resources + resource_jars,
@@ -146,6 +151,28 @@ def compile_scala(
             for f in expand_location(ctx, final_scalac_jvm_flags)
         ] + [args],
     )
+
+    if len(ctx.files.srcs) + len(all_srcjars.to_list()) == 0 or not ctx.coverage_instrumented() or not hasattr(ctx.attr, "_code_coverage_instrumentation_worker"):
+        pass
+    else:
+        input_jar = temp_output
+        output_jar = output
+
+        args = ctx.actions.args()
+        args.set_param_file_format("multiline")
+        args.use_param_file("@%s", use_always = True)
+        args.add(input_jar)
+        args.add(output_jar)
+        args.add_all(ctx.files.srcs)
+
+        ctx.actions.run(
+            mnemonic = "JacocoInstrumenter",
+            inputs = [input_jar],
+            outputs = [output_jar],
+            executable = ctx.attr._code_coverage_instrumentation_worker.files_to_run,
+            execution_requirements = {"supports-workers": "1"},
+            arguments = ["--jvm_flag=%s" % f for f in allow_security_manager(ctx)] + [args],
+        )
 
 def compile_java(ctx, source_jars, source_files, output, extra_javac_opts, providers_of_dependencies):
     java_toolchain = specified_java_compile_toolchain(ctx)
@@ -222,11 +249,5 @@ def java_bin_windows(ctx):
 def is_windows(ctx):
     return ctx.configuration.host_path_separator == ";"
 
-# Return a jvm flag allowing security manager for jdk runtime >= 17
-# If no runtime is supplied then runtime is taken from ctx.attr._java_host_runtime
-# This must be a runtime used in generated java_binary script (usually workers using SecurityManager)
 def allow_security_manager(ctx, runtime = None):
-    java_runtime = runtime if runtime else ctx.attr._java_host_runtime[java_common.JavaRuntimeInfo]
-
-    # Bazel 5.x doesn't have java_runtime.version defined
-    return ["-Djava.security.manager=allow"] if hasattr(java_runtime, "version") and java_runtime.version >= 17 else []
+    return ["-Djava.security.manager=allow"]
