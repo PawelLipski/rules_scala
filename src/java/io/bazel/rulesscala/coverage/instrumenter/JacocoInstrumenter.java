@@ -24,8 +24,6 @@ import org.jacoco.core.runtime.OfflineInstrumentationAccessGenerator;
 public final class JacocoInstrumenter implements Worker.Interface {
 
   public static void main(String[] args) throws Exception {
-    //if (true) throw new RuntimeException("lolxd");
-
     Worker.workerMain(args, new JacocoInstrumenter());
   }
 
@@ -45,7 +43,6 @@ public final class JacocoInstrumenter implements Worker.Interface {
     Path inPath = Paths.get(args[0]);
     Path outPath = Paths.get(args[1]);
     String[] srcs = Arrays.copyOfRange(args, 2, args.length);
-    System.out.println("JacocoInstrumenter.processArg: inPath = " + inPath + ", outPath = " + outPath);
 
     // Use a directory for coverage metadata that is unique to each built jar. Avoids
     // multiple threads performing read/write/delete actions on the instrumented classes directory.

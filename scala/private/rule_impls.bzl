@@ -131,7 +131,6 @@ def compile_scala(
     # @bazel_tools//tools/jdk:toolchain_type
     final_scalac_jvm_flags = first_non_empty(scalac_jvm_flags, toolchain.scalac_jvm_flags) + allow_security_manager(ctx)
 
-    # print("compile_scala: output = %s, ctx.coverage_instrumented() = %s, len(ctx.files.srcs) = %s, len(all_srcjars) = %s" % (output, ctx.coverage_instrumented(), len(ctx.files.srcs), len(all_srcjars.to_list())))
     ctx.actions.run(
         inputs = ins,
         outputs = outs,
@@ -166,7 +165,6 @@ def compile_scala(
         args.add(output_jar)
         args.add_all(ctx.files.srcs)
 
-        print("**** compile_scala, JacocoInstrumenter, input_jar = %s, output_jar = %s" % (input_jar, output_jar))
         ctx.actions.run(
             mnemonic = "JacocoInstrumenter",
             inputs = [input_jar],

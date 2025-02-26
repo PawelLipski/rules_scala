@@ -1,15 +1,15 @@
 """Rules for writing tests with ScalaTest"""
 
 load("@bazel_skylib//lib:dicts.bzl", _dicts = "dicts")
-load("@io_bazel_rules_scala//scala:scala_cross_version.bzl", "scala_version_transition", "toolchain_transition_attr")
-load("@io_bazel_rules_scala//scala/private:common.bzl", "sanitize_string_for_usage")
 load(
     "@io_bazel_rules_scala//scala/private:common_attributes.bzl",
     "common_attrs",
     "implicit_deps",
     "launcher_template",
 )
+load("@io_bazel_rules_scala//scala/private:common.bzl", "sanitize_string_for_usage")
 load("@io_bazel_rules_scala//scala/private:common_outputs.bzl", "common_outputs")
+load("@io_bazel_rules_scala//scala:scala_cross_version.bzl", "scala_version_transition", "toolchain_transition_attr")
 load(
     "@io_bazel_rules_scala//scala/private:phases/phases.bzl",
     "extras_phases",
@@ -47,6 +47,7 @@ def _scala_test_impl(ctx):
             # no need to build an ijar for an executable
             ("semanticdb", phase_semanticdb),
             ("compile", phase_compile_scalatest),
+            ("coverage", phase_coverage_common),
             ("merge_jars", phase_merge_jars),
             ("runfiles", phase_runfiles_scalatest),
             ("coverage_runfiles", phase_coverage_runfiles),
